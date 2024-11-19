@@ -1,0 +1,36 @@
+{% extends 'app/base.html' %}
+{% block back %}
+{% endblock back %}
+{% block body %}
+<br><br><br><br><br><br>
+<h1 class="text-center">Contact-us</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>We Value Your Feedback!</h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <span class="alert text-danger">{{message}}</span>
+                        {% endfor %}
+                    {% endif %}
+                    <form action="{% url 'contact' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="description" class="form-label">Your Suggestion</label>
+                            <textarea class="form-control" id="description" name="description" rows="5" placeholder="Please enter your suggestion or feedback..." required></textarea>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Submit Suggestion</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+      
+{% endblock body %}

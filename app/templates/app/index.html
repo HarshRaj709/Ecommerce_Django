@@ -1,0 +1,87 @@
+{% extends "app/base.html" %}
+
+{% block Title %}
+Zombiee Fashion
+{% endblock Title %}
+
+
+{% block body %}
+
+<!-- Portfolio Section -->
+<section id="portfolio" class="portfolio section">
+
+    <!-- Section Title -->
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Check my Zombiee Fashion</h2>
+      <p><span>Check Our</span> <span class="description-title">Products</span></p>
+      <h2 class="text-center text-dark">Choose Available Fashion options</h2> <br>
+      {% if messages %}
+                        {% for message in messages %}
+                            <span class="alert text-danger">{{message}}</span>
+                        {% endfor %}
+      {% endif %}
+      <div class="container">
+        <a href="{% url 'home' %}"><button class="btn btn-success cart btn-sm mt-2 m-4">All</button></a>
+        {% for category in categories %}
+        <a href="{% url 'home' category.category %}"><button class="btn btn-success cart btn-sm mt-2 m-4">{{category.category}}</button></a>
+        {% endfor %}
+      </div>
+    </div><!-- End Section Title -->
+    {% if allProds %}
+      <div class="container">
+        {% for product, range, nSlides in allProds %}
+          <div class="container">
+            <h3 class="my-3 text-center text-success bg-light">{{product.0.category}} Flashsale</h3>
+          </div>
+          <div class="container">
+            <div class="row">
+              {% for i in product %}
+                <div class="col-md-3 mt-3">
+                  <img src="{{i.image.url}}" class='card-img-top' width='250px' height='350px' alt="" srcset="">
+                    <div class="card-body">
+                      <h5 class="card-title" id='namepr{{i.id}}'>{{i.product_name}}</h5>
+                      <p class="card-text">{{i.desc|slice:'0:53'}}...</p>
+                      <h6 class="card-title">Price:<span id="pricepr{{i.id}}">
+                        {{i.price}}</span></h6>
+                        <form action="{% url 'cart' i.id %}" method="POST">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-success cart btn-sm mt-0">Add to Cart</button>
+                        </form>
+                        <a href="{{i.image.url}}"><button class="btn btn-success btn-sm cart">view</button></a>
+                    </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </section><!-- /Portfolio Section -->
+  {% else %}
+  <div class="container">
+    <h3 class="my-3 text-center text-success bg-light">{{ products.0.category.category }} Products</h3>
+</div>
+<div class="container">
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-3 mt-3">
+                <div class="card">
+                    <img src="{{ product.image.url }}" class="card-img-top" width='250px' height='350px' alt="">
+                    <div class="card-body">
+                        <h5 class="card-title" id="namepr{{ product.id }}">{{ product.product_name }}</h5>
+                        <p class="card-text">{{ product.desc|slice:'0:53' }}...</p>
+                        <h6 class="card-title">Price: <span id="pricepr{{ product.id }}">{{ product.price }}</span></h6>
+                        <form action="{% url 'cart' product.id %}" method="POST">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-success cart btn-sm mt-0">Add to Cart</button>
+                        </form>
+                        <a href="{{ product.image.url }}"><button class="btn btn-success btn-sm cart">View</button></a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock body %}

@@ -1,0 +1,40 @@
+<header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="{% url 'home' %}" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="{% static 'assets/img/logo.png" alt=""> -->
+        <h1 class="sitename">Zombiee Style</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{% url 'home' %}" class="active">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">My Order</a></li>
+          {% if request.user.is_authenticated %}
+          <li><a href="{% url 'profile' %}">My Profile</a></li>
+
+          <li class="dropdown"><a href="#"><span>Sign out</span> 
+            <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+          {% else %}
+          <li class="dropdown"><a href="#"><span>Sign In</span> 
+            <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+          {% endif %}
+            <ul>
+              {% if not request.user.is_authenticated %}
+              <li><a href='{% url "signup" %}'>Sign Up</a></li>
+              <li><a href='{% url "signin" %}'>Log In</a></li>
+              {% else %}
+              <li><a href='{% url "logout" %}'>Logout</a></li>
+              {% endif %}
+            </ul>
+          </li>
+          <li><a href="{% url 'cart' %}">Cart</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+    </div>
+  </header>
