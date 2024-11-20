@@ -110,8 +110,18 @@ def cart(request, product=None):
 
         messages.success(request, 'Product added to the cart!')
         return redirect('home')
+    
+    
+    total_cart = CartItem.objects.filter(cart = user_cart)
+    print('Total Cart',total_cart)
+    total = 0
+    for item in total_cart:
+        total+=item.product.price * item.quantity           #item__product__price is a lookup style used in filtering or querying, not for accessing fields of an instance.
+    
+
+
     cart_items = CartItem.objects.filter(cart=user_cart)
-    return render(request, 'app/cart.html', {'carts': cart_items})
+    return render(request, 'app/cart.html', {'carts': cart_items,'grand_total':total})
 
 
 def remove_cart(request,product):
@@ -123,3 +133,24 @@ def remove_cart(request,product):
     # left = CartItem.objects.filter(cart = request.user.cart)            #request.user.cart refers to the single cart that is tied to the logged-in user
     # print(item)
     return redirect('cart')
+
+def Cart_quantity(request,product):
+    if request.method == 'POST':
+        clicked = request.POST.get('action')
+        cart_item = get_object_or_404(CartItem,product__id=product)
+        # product = Products.objects.get(id=product)
+        # cart_item = CartItem.objects.get(product=product)
+        print(clicked)
+        if clicked == 'increase':
+            cart_item.quantity +=1
+            cart_item.save()
+            messages.success(request,'Product Quantity increased by 1.')
+            # print(cart_item.quantity)
+        elif clicked == 'decrease':
+            if cart_item.quantity>1:
+                cart_item.quantity -=1
+                cart_item.save()
+                messages.success(request,'Product Quantity decreased by 1.')
+            else:
+                messages.error(request,"Can't make item 0, if you want to remove product click to 'Remove' button.")
+        return redirect('cart')
