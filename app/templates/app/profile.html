@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>{% block Title %}Profile Page{% endblock Title %}</title>
+  <title>{% block Title %}Edit Profile{% endblock Title %}</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -16,19 +16,85 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
   <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
   <!-- Main CSS File -->
   <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
-  <!-- main.css (or inline styles within the HTML file as shown previously) -->
-<style>
+
+  <style>
+    
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+    color: #333;
+    min-height: 100vh;
+  }
+
+  .container {
+    padding-top: 50px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .card {
+    border-radius: 12px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+  }
+
+  .card-header {
+    background-image: url("{% static 'assets/img/profile-bg.jpg' %}");
+    background-size: cover;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .card-body {
+    padding: 30px; /* Increased padding to create space from card borders */
+  }
+
+  .form-control {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px; /* Added margin between fields */
+  }
+
+  .btn-primary {
+    background-color: #4caf50;
+    border-color: #4caf50;
+    border-radius: 8px;
+  }
+
+  .btn-primary:hover {
+    background-color: #45a049;
+  }
+
+  .btn-secondary {
+    border-radius: 8px;
+  }
+
+  .text-center img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .form-group label {
+    font-weight: 500;
+  }
+
+  .text-center span.alert {
+    margin-top: 10px;
+    display: block;
+  }
     /* Navbar background opacity */
     .header {
         background-color: rgba(0, 0, 0, 0.8) !important; /* Adjust opacity as needed */
@@ -60,95 +126,83 @@
         color: #fff;
         background-color: #6c757d !important;
     }
-</style>
-
+    .form-group label {
+        font-weight: bold; /* Makes the labels bold */
+        margin-left: 10px; /* Adds a left margin for spacing */
+        display: block; /* Ensures proper alignment with form fields */
+      }
+  </style>
 </head>
 
 <body>
-  <!-- Include Navbar Here -->
+  <!-- Include Navbar -->
   {% include 'app/navbar.html' %}
-    <br><br><br><br>
-  <!-- Content goes here -->
-  {% block content %}
-  <div class="container mt-5">
+
+  <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <!-- Card for Profile Edit Form -->
-            <div class="card">
-                <div class="card-header text-center">
-                    <h4>Edit Profile</h4>
-                    {% if messages %}
-                        {% for message in messages %}
-                            <span class="alert text-danger">{{message}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <!-- Profile Picture Section -->
-                    {% comment %} <div class="text-center mb-3">
-                        <img src="https://via.placeholder.com/100" class="rounded-circle" alt="Profile Picture">
-                        <div class="mt-2">
-                            <button class="btn btn-sm btn-outline-primary">Change Profile Picture</button>
-                        </div>
-                    </div> {% endcomment %}
-                    <!-- Profile Edit Form -->
-                    <form method='POST' action="{% url 'profile' %}">
-                        {% csrf_token %}
-                        <!-- Name Input -->
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" name = 'username' class="form-control" id="name" value="{{current.username}}">
-                        </div>
-                        <!-- Email Input -->
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" name='email' class="form-control" id="email" value="{{current.email}}">
-                        </div>
-                        <!-- Personal Input -->
-                        <div class="form-group">
-                            <label for="text">First Name</label>
-                            <input type="text" name='first' class="form-control" id="password" value="{{current.first_name}}">
-                        </div>
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h4>Edit Profile</h4>
+          </div>
 
-                        <div class="form-group">
-                            <label for="text">Last Name</label>
-                            <input type="text" name='last' class="form-control" id="password" value="{{current.last_name}}">
-                        </div>
+            <!-- Profile Edit Form -->
+            <form method="POST" action="{% url 'profile' %}">
+              {% csrf_token %}
+              <!-- Form Fields -->
+              <div class="form-group mb-3">
+                <label for="name">Full Name</label>
+                <input type="text" name="username" class="form-control" id="name" value="{{ current.username }}">
+              </div>
+              <div class="form-group mb-3">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" class="form-control" id="email" value="{{ current.email }}">
+              </div>
+              <div class="form-group mb-3">
+                <label for="first_name">First Name</label>
+                <input type="text" name="first" class="form-control" id="first_name" value="{{ current.first_name }}">
+              </div>
+              <div class="form-group mb-3">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last" class="form-control" id="last_name" value="{{ current.last_name }}">
+              </div>
+              <div class="form-group mb-3">
+                <label for="address">Address</label>
+                <input type="text" name="Address" class="form-control" id="address" value="{{ extra.Address }}">
+              </div>
+              <div class="form-group mb-3">
+                <label for="zip">Zip</label>
+                <input type="text" name="zip" class="form-control" id="zip" value="{{ extra.zip }}">
+              </div>
+              <div class="form-group mb-3">
+                <label for="state">State</label>
+                <input type="text" name="state" class="form-control" id="state" value="{{ extra.state }}">
+              </div>
+              <div class="form-group mb-3">
+                <label for="country">Country</label>
+                <input type="text" name="country" class="form-control" id="country" value="{{ extra.country }}">
+              </div>
+              <div class="form-group mb-3">
+                <label for="contact_no">Contact No.</label>
+                <input type="text" name="contact_no" class="form-control" id="contact_no" value="{{ extra.contact_no }}">
+              </div>
 
-                        <div class="form-group">
-                            <label for="text">Address</label>
-                            <input type="text" name='Address' class="form-control" id="password" value='{{extra.Address}}'>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="text">Contact No.</label>
-                            <input type="text" name='contact_no' class="form-control" id="password" value='{{extra.contact_no}}'>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                            <a href="{% url 'home' %}"><button type="button" class="btn btn-secondary ml-2">Cancel</button></a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+              <!-- Buttons -->
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                <a href="{% url 'home' %}">
+                  <button type="button" class="btn btn-secondary mt-2 w-100">Cancel</button>
+                </a>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-  {% endblock content %}
+  </div>
 
   <!-- Vendor JS Files -->
   <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
-  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
-  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
-
-  <!-- Main JS File -->
-  <script src="{% static 'assets/js/main.js' %}"></script>
 </body>
 
 </html>

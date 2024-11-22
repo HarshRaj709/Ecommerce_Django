@@ -2,10 +2,12 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import ProfileForm,Extraform,ContactForm
-from .models import Extrainfo,Contact,Products,Product_category,Subcategory,Cart,CartItem
+from .models import Extrainfo,Contact,Products,Product_category,Subcategory,Cart,CartItem,User_Orders,OrderItem
 from math import ceil
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required(login_url='signin')
 def userProfile(request):
     current = request.user
     try:
@@ -53,7 +55,7 @@ def userProfile(request):
         context = {'current':current,'extra':extra_info}
         return render(request,'app/profile.html',context)
     
-
+@login_required(login_url='signin')
 def contact(request):
     if request.method == 'POST':
         fm = ContactForm(request.POST)
@@ -93,6 +95,7 @@ def home(request,category=None):
         # print(products)
         return render(request,'app/index.html',{'products':products,'categories':categories})
 
+@login_required(login_url='signin')
 def cart(request, product=None):
     if not request.user.is_authenticated:
         messages.error(request, "You need to log in to add items to the cart.")
@@ -111,19 +114,18 @@ def cart(request, product=None):
         messages.success(request, 'Product added to the cart!')
         return redirect('home')
     
-    
+    #Adding money
     total_cart = CartItem.objects.filter(cart = user_cart)
-    print('Total Cart',total_cart)
+    # print('Total Cart',total_cart)
     total = 0
     for item in total_cart:
         total+=item.product.price * item.quantity           #item__product__price is a lookup style used in filtering or querying, not for accessing fields of an instance.
     
-
-
     cart_items = CartItem.objects.filter(cart=user_cart)
     return render(request, 'app/cart.html', {'carts': cart_items,'grand_total':total})
 
 
+@login_required(login_url='signin')
 def remove_cart(request,product):
     # print(product)
     # item = CartItem.objects.get(product_id=product)
@@ -134,6 +136,8 @@ def remove_cart(request,product):
     # print(item)
     return redirect('cart')
 
+
+@login_required(login_url='signin')
 def Cart_quantity(request,product):
     if request.method == 'POST':
         clicked = request.POST.get('action')
@@ -154,3 +158,40 @@ def Cart_quantity(request,product):
             else:
                 messages.error(request,"Can't make item 0, if you want to remove product click to 'Remove' button.")
         return redirect('cart')
+    
+
+@login_required(login_url='signin')
+def Checkout(request):
+    user = request.user
+    info = Extrainfo.objects.get(Users=user)
+    total_cart = CartItem.objects.filter(cart__user = user)
+    # print('Total Cart',total_cart)
+    total = 0
+    for item in total_cart:
+        total+=item.product.price * item.quantity 
+
+    if request.method == 'POST':
+        # Create the order
+        order = User_Orders.objects.create(user=user, cart=user.cart,total = total)
+
+        # Create order items for the order
+        for item in total_cart:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.price
+            )
+        
+        # Optionally, clear the cart after placing the order
+        total_cart.delete()  # This will delete the cart items after the order is placed
+        return redirect('home')
+    else:
+        return render(request,'app/Checkout.html',{'user':info,'personal':user,'total':total})
+
+def My_order(request):
+    user = request.user
+    orders = user.orders.all().order_by('-created_at')
+    # order_value=User_Orders.objects.get(user=user)
+    # total = order_value.total
+    return render(request,'app/my_orders.html',{'orders': orders})

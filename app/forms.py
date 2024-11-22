@@ -45,13 +45,19 @@ class ProfileForm(forms.Form):
 class Extraform(forms.ModelForm):
     class Meta:
         model = Extrainfo
-        fields = ['Address','contact_no']           #converted contact field to CharField to use isdigit()
+        fields = ['state','country','Address','contact_no','zip']           #converted contact field to CharField to use isdigit()
 
     def clean_contact_no(self):
         contact = self.cleaned_data.get('contact_no')
         if not contact.isdigit() or len(contact) != 10:
             raise forms.ValidationError('Please enter a valid 10-digit phone number.')
         return contact
+    
+    def clean_zip(self):
+        zip = str(self.cleaned_data['zip'])
+        if not zip.isdigit() or len(zip)!=6:
+            raise forms.ValidationError('Please Enter Valid Zip address')
+        return zip
     
 
 class ContactForm(forms.ModelForm):
