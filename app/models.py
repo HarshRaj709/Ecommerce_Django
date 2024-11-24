@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 
 # Users extra info
 class Extrainfo(models.Model):
@@ -65,12 +65,19 @@ class User_Orders(models.Model):
     cart = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name='my_cart')
     created_at = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2)
+    delivered = models.BooleanField(default=False)
+    delivered_on = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.delivered and not self.delivered_on:
+            self.delivered_on = timezone.now()
+        super(User_Orders, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.user.username} created at {self.created_at}'
 
 
-class OrderItem(models.Model):
+class OrderItem(models.Model):          #used for my_orders details
     order = models.ForeignKey(User_Orders, on_delete=models.CASCADE, related_name='order_items')
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)

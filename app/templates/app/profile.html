@@ -145,6 +145,11 @@
           <div class="card-header">
             <h4>Edit Profile</h4>
           </div>
+          {% if messages %}
+                        {% for message in messages %}
+                            <span class="alert text-danger">{{message}}</span>
+                        {% endfor %}
+          {% endif %}
 
             <!-- Profile Edit Form -->
             <form method="POST" action="{% url 'profile' %}">

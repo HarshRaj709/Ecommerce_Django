@@ -189,6 +189,7 @@ def Checkout(request):
     else:
         return render(request,'app/Checkout.html',{'user':info,'personal':user,'total':total})
 
+@login_required(login_url='signin')
 def My_order(request):
     user = request.user
     orders = user.orders.all().order_by('-created_at')

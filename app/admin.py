@@ -20,5 +20,8 @@ admin.site.register(Product_category)
 admin.site.register(Subcategory)
 admin.site.register(CartItem)
 admin.site.register(Cart)
-admin.site.register(User_Orders)
+# admin.site.register(User_Orders)
+@admin.register(User_Orders)
+class AdminUserorder(admin.ModelAdmin):
+    list_display = [field.name for field in User_Orders._meta.fields]
 admin.site.register(OrderItem)
