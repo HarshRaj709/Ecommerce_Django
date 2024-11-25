@@ -124,6 +124,7 @@
     <div class="row">
       {% for order in orders %}
       <div class="order-card position-relative">
+        <h3 class="order-header">Order id:{{order.id}}</h3>
         <h4 class="order-header">Order placed on: {{ order.created_at }}</h4>
         <ul>
           {% for item in order.order_items.all %}
@@ -151,6 +152,10 @@
         {% if order.delivered %}
         <div class='text-center text-success'>
           delivered on:{{order.delivered_on}}
+        </div>
+        {% else %}
+        <div class="text-center text-danger">
+          Expected delivery: {{ order.expected_delivery|date:"M. d, Y" }}
         </div>
         {% endif %}
         <!-- Display Total Paid in a Styled Box -->

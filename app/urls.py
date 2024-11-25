@@ -12,4 +12,5 @@ urlpatterns = [
     path('cart/quantity/<int:product>/',views.Cart_quantity,name='quantity'),
     path('Checkout/cart/',views.Checkout,name='checkout'),
     path('My_orders/',views.My_order,name='my_orders'),
+    path('order_success/<int:order_id>/',views.order_success,name='ord_success'),
 ]

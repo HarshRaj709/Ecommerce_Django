@@ -5,6 +5,7 @@ from .forms import ProfileForm,Extraform,ContactForm
 from .models import Extrainfo,Contact,Products,Product_category,Subcategory,Cart,CartItem,User_Orders,OrderItem
 from math import ceil
 from django.contrib.auth.decorators import login_required
+from datetime import timedelta
 
 # Create your views here.
 @login_required(login_url='signin')
@@ -72,6 +73,7 @@ def contact(request):
     return render(request,'app/contact.html')
 
 def home(request,category=None):
+    active = True
     categories = Product_category.objects.all()
     # print(categories)
     if not category:
@@ -93,7 +95,7 @@ def home(request,category=None):
         #print(category)
         products = Products.objects.filter(category__category=category)
         # print(products)
-        return render(request,'app/index.html',{'products':products,'categories':categories})
+        return render(request,'app/index.html',{'products':products,'categories':categories,'active':active})
 
 @login_required(login_url='signin')
 def cart(request, product=None):
@@ -174,6 +176,26 @@ def Checkout(request):
         # Create the order
         order = User_Orders.objects.create(user=user, cart=user.cart,total = total)
 
+
+#creating a Paytm Integration
+        # user_email = order.user.email
+        # print(user_email)
+        # id = order.id 
+        # print(id)
+        # oid = str(id)+'ZombieCart'
+        # param_dict = {
+        #     'MID':keys.MID,
+        #     'ORDER_ID':oid,
+        #     'TXN_AMOUNT': str(total),
+        #     'CUST_ID': user_email,
+        #     'INDUSTRY_TYPE_ID': 'Retail',
+        #     'WEBSITE': 'WEBSTAGING',
+        #     'CHANNEL_ID':'web',
+        #     'CALLBACK_URL':'http://127.0.0.1:8000/handlerequest/',
+        # }
+
+        # param_dict['CHECKSUMHASH'] = Checksum.generate_
+
         # Create order items for the order
         for item in total_cart:
             OrderItem.objects.create(
@@ -183,9 +205,8 @@ def Checkout(request):
                 price=item.product.price
             )
         
-        # Optionally, clear the cart after placing the order
         total_cart.delete()  # This will delete the cart items after the order is placed
-        return redirect('home')
+        return redirect('ord_success',order_id=order.id)
     else:
         return render(request,'app/Checkout.html',{'user':info,'personal':user,'total':total})
 
@@ -193,6 +214,16 @@ def Checkout(request):
 def My_order(request):
     user = request.user
     orders = user.orders.all().order_by('-created_at')
+
+    #add new expected_delivery attribute to the order
+    for order in orders:
+        order.expected_delivery = order.created_at + timedelta(days=5) 
     # order_value=User_Orders.objects.get(user=user)
     # total = order_value.total
     return render(request,'app/my_orders.html',{'orders': orders})
+
+@login_required(login_url='signin')
+def order_success(request,order_id):
+    order_info = User_Orders.objects.get(id=order_id)
+    order_info.expected_delivery = order_info.created_at + timedelta(days=5)
+    return render(request,'app/order_success.html',{'order_info':order_info})

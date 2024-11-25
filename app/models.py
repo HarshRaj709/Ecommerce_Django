@@ -22,19 +22,22 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.name.username
-    
+
+#product belongs to which category like clothes, shoes, electronic etc
 class Product_category(models.Model):
     category = models.CharField(max_length=250)
     def __str__(self):
         return self.category
 
+#sub category of Products like men/women
 class Subcategory(models.Model):
     category = models.ForeignKey(Product_category,on_delete=models.CASCADE,related_name="subcategories")
     sub_category = models.CharField(max_length=300)
 
     def __str__(self):
         return f"{self.category.category} - {self.sub_category}"
-    
+
+#complete information of product
 class Products(models.Model):
     product_name = models.CharField(max_length=50,default='')
     category = models.ForeignKey(Product_category,on_delete=models.CASCADE)           #ill add category foreign key
@@ -46,12 +49,15 @@ class Products(models.Model):
     def __str__(self):
         return self.product_name
 
+#cart - each user has single cart at a time
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='cart')         #single user - single cart
 
     def __str__(self):
         return f"Cart of {self.user.username}"
 
+
+# Stores information about cart items, Each cart can have multile products onetomany relations
 class CartItem(models.Model):           #other things cart must have have
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -59,7 +65,8 @@ class CartItem(models.Model):           #other things cart must have have
 
     def __str__(self):
         return f"{self.id} {self.quantity} x {self.product.product_name} in {self.cart.user.username}'s cart"
-    
+
+#Stores information about Users order - Basically to store users previous orders record with its order time
 class User_Orders(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='orders')
     cart = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name='my_cart')
@@ -77,6 +84,7 @@ class User_Orders(models.Model):
         return f'{self.user.username} created at {self.created_at}'
 
 
+#this stores what in the previous order of user - basically previous order products
 class OrderItem(models.Model):          #used for my_orders details
     order = models.ForeignKey(User_Orders, on_delete=models.CASCADE, related_name='order_items')
     product = models.ForeignKey(Products, on_delete=models.CASCADE)

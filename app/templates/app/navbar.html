@@ -9,11 +9,11 @@
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="{% url 'home' %}" class="active">Home</a></li>
+          <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
           <li><a href="#about">About</a></li>
-          <li><a href="{% url 'my_orders' %}">My Order</a></li>
+          <li><a href="{% url 'my_orders' %}" class="{% if request.resolver_match.url_name == 'my_orders' %}active{% endif %}">My Order</a></li>
           {% if request.user.is_authenticated %}
-          <li><a href="{% url 'profile' %}">My Profile</a></li>
+          <li><a href="{% url 'profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">My Profile</a></li>
 
           <li class="dropdown"><a href="#"><span>Sign out</span> 
             <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -30,8 +30,8 @@
               {% endif %}
             </ul>
           </li>
-          <li><a href="{% url 'cart' %}">Cart</a></li>
-          <li><a href="{% url 'contact' %}">Contact</a></li>
+          <li><a href="{% url 'cart' %}" class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">Cart</a></li>
+          <li><a href="{% url 'contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>

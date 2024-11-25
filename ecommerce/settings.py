@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'app',
     'auths',
+    'sellers',
 ]
 
 AUTHENTICATION_BACKENDS = ( 'django.contrib.auth.backends.ModelBackend',
